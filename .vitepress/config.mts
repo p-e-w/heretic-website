@@ -5,7 +5,7 @@ export default defineConfig({
   title: "Heretic",
   description: "Fully automatic censorship removal for language models",
 
-  head: [['link', { rel: 'icon', href: '/logo.png' }]],
+  head: [['link', { rel: 'icon', href: 'logo.png' }]],
 
   base: "/heretic-website/",
 
