@@ -7,8 +7,6 @@ export default defineConfig({
 
   head: [['link', { rel: 'icon', href: 'logo.png' }]],
 
-  base: "/heretic-website/",
-
   appearance: "force-dark",
 
   themeConfig: {
