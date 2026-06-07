@@ -1,33 +1,28 @@
 :root {
     --vp-c-bg: #1a172c;
-    --vp-nav-height: 20px;
     --vp-home-hero-image-background-image: linear-gradient(0deg, #f9660b 50%, #491a1c 50%);
     --vp-home-hero-image-filter: blur(80px);
 }
 
-.VPNav {
-    display: none !important;
+#get-started {
+    letter-spacing: -.01em;
+    line-height: 28px;
+    font-size: 20px;
+    font-weight: bold;
 }
 
-#get-started-in-minutes-python-3-10 {
-    margin-top: 0;
-}
-
-#get-started-in-minutes-python-3-10 .header-anchor {
-    display: none;
+@media (min-width: 768px) {
+    .VPHome {
+        margin-bottom: 64px !important;
+    }
 }
 
 .VPHome .language-sh {
-    margin-bottom: 50px !important;
     font-size: larger;
 }
 
-.VPHome .language-sh .lang {
+.language-sh .lang {
     display: none;
-}
-
-.VPHome .vp-doc p {
-    opacity: 0.6;
 }
 
 .VPHero .VPImage {
