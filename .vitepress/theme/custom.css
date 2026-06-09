@@ -21,7 +21,8 @@
     font-size: larger;
 }
 
-.language-sh .lang {
+.language-sh .lang,
+.language-toml .lang {
     display: none;
 }
 
