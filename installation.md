@@ -87,6 +87,8 @@ enabling decentralized retrieval. The CIDs are:
 
 | Filename                            | CID                                                           |
 | ----------------------------------- | ------------------------------------------------------------- |
+| **heretic-1.4.0.zip**               | `bafybeiaqxqjdtkkrqeamnkjudvxlnrj7mululk3ipiafcyfhp2i3chbnue` |
+| **heretic-1.4.0.zip.sigstore.json** | `bafkreidhxgotlfko23bajxbcoruljpt7wkuytew7fjuglotjpr3cm7bwi4` |
 | **heretic-1.3.0.zip**               | `bafybeianhsrnlkxdf5btyvgsaahqkhurmrowkuk4ymddz37wcnxz7gjxoe` |
 | **heretic-1.3.0.zip.sigstore.json** | `bafkreiflkjpyazath4n4lhoi67rvgds4k3spcsqjloeby4uj2cs232s6ui` |
 | **heretic-1.2.0.zip**               | `bafybeifxnfy6tkakofe5ktlmeayk6edhja6neuv37bldimiq76dncicqqa` |
