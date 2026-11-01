@@ -21,8 +21,8 @@ To verify a signature, install [Cosign](https://docs.sigstore.dev/quickstart/qui
 and run
 
 ```sh
-cosign verify-blob heretic-1.3.0.zip \
-  --bundle heretic-1.3.0.zip.sigstore.json \
+cosign verify-blob heretic-2.0.0.zip \
+  --bundle heretic-2.0.0.zip.sigstore.json \
   --certificate-identity=pew@worldwidemann.com \
   --certificate-oidc-issuer=https://github.com/login/oauth
 ```

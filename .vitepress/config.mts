@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Heretic",
-  description: "Fully automatic censorship removal for language models",
+  description: "Training-free language model modification: Remove censorship, suppress slop, reduce sycophancy, and more",
 
   head: [['link', { rel: 'icon', href: 'logo.png' }]],
 

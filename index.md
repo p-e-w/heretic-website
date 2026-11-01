@@ -4,7 +4,7 @@ layout: home
 
 hero:
   text: Take control of the most important technology of our time
-  tagline: Heretic removes restrictions from language models, making sure they always follow your instructions
+  tagline: Heretic removes restrictions from language models, making sure they always follow your instructions.<br>And it does many other amazing things.
   image:
     src: /logo.png
     alt: Heretic logo

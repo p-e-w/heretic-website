@@ -113,13 +113,13 @@ possible to process small models (4B in this case).
 > See the [`quantization`](/configuration#quantization) setting for details.
 
 ```
-█░█░█▀▀░█▀▄░█▀▀░▀█▀░█░█▀▀  v1.3.0
-█▀█░█▀▀░█▀▄░█▀▀░░█░░█░█░░
+█░█░█▀▀░█▀▄░█▀▀░▀█▀░█░█▀▀  v2.0.0
+█▀█░█▀▀░█▀▄░█▀▀░░█░░█░█░░  https://heretic-project.org
 ▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░░▀░▀▀▀  https://github.com/p-e-w/heretic
 
 Detected 1 CUDA device(s) (11.63 GB total VRAM)
-CUDA Version: 12.8
-Driver Version: 580.159.03
+CUDA Version: 13.0
+Driver Version: 580.178.04
 * CUDA 0: NVIDIA GeForce RTX 3060 (11.63 GB)
 ```
 
@@ -131,27 +131,14 @@ already cached), analyzes its architecture, and displays the amount of memory it
 ```
 Loading model Qwen/Qwen3.5-4B...
 * Trying dtype auto...
-* LoRA adapters initialized (target types: down_proj, o_proj, out_proj)
 * Transformer model with 32 layers
-* Abliterable components:
+* Modifiable components:
   * attn.o_proj: 32 modules total
   * mlp.down_proj: 32 modules total
 
-Resident system RAM: 1.83 GB
-Allocated GPU VRAM: 8.47 GB
-Reserved GPU VRAM: 8.52 GB
-```
-
-### Prompt loading
-
-The prompt datasets used for calculating refusal directions are now being loaded.
-
-```
-Loading good prompts from mlabonne/harmless_alpaca...
-* 400 prompts loaded
-
-Loading bad prompts from mlabonne/harmful_behaviors...
-* 400 prompts loaded
+Resident system RAM: 2.07 GB
+Allocated GPU VRAM: 8.46 GB
+Reserved GPU VRAM: 8.54 GB
 ```
 
 ### Automatic batch size determination
@@ -161,13 +148,16 @@ This step determines the largest batch size your system can support, in order to
 processing speed.
 
 ```
+Loading batch size test prompts from mlabonne/harmless_alpaca...
+* 256 prompts loaded
+
 Determining optimal batch size...
-* Trying batch size 1... Ok (25 tokens/s)
-* Trying batch size 2... Ok (44 tokens/s)
-* Trying batch size 4... Ok (78 tokens/s)
-* Trying batch size 8... Ok (122 tokens/s)
-* Trying batch size 16... Ok (178 tokens/s)
-* Trying batch size 32... Ok (225 tokens/s)
+* Trying batch size 1... Ok (29 tokens/s)
+* Trying batch size 2... Ok (48 tokens/s)
+* Trying batch size 4... Ok (85 tokens/s)
+* Trying batch size 8... Ok (138 tokens/s)
+* Trying batch size 16... Ok (202 tokens/s)
+* Trying batch size 32... Ok (260 tokens/s)
 * Trying batch size 64... Failed (CUDA out of memory)
 * Chosen batch size: 32
 ```
@@ -178,111 +168,119 @@ Reasoning models often start their responses with a thinking block (such as `<th
 Skipping the tokens in this block improves accuracy when calculating refusal directions, and
 Heretic automatically tests for such prefixes in order to do this.
 
-In this case, no prefix is found.
+```
+Loading response prefix test prompts from [mlabonne/harmless_alpaca, mlabonne/harmful_behaviors]...
+* 200 prompts loaded
+
+Checking chat template for a closed Chain-of-Thought block or an initializer...
+* Chat template inserts CoT initializer: '<think>'
+* Remaining CoT finalizer: '</think>'
+* Rechecking with prefix...
+* Extended prefix found: '</think>\n\n'
+```
+
+### Scorer initialization
+
+Heretic evaluates model performance using scorer plugins. The configured scorers
+are now being loaded, and an initial evaluation is performed.
 
 ```
-Checking for common response prefix...
-* None found
-```
+Loading and initializing scorers...
+* Loaded: KeywordRate
+* Loaded: KLDivergence
 
-### Evaluation prompt loading
-
-The prompt datasets used for evaluating model performance are now being loaded,
-and an initial evaluation is performed.
-
-```
-Loading good evaluation prompts from mlabonne/harmless_alpaca...
+Loading Refusals evaluation prompts from mlabonne/harmful_behaviors...
 * 100 prompts loaded
-* Obtaining first-token probability distributions...
 
-Loading bad evaluation prompts from mlabonne/harmful_behaviors...
+Loading KL divergence evaluation prompts from mlabonne/harmless_alpaca...
 * 100 prompts loaded
-* Counting model refusals...
-* Initial refusals: 93/100
+* Obtaining baseline first-token probability distributions...
+
+Getting baseline scores...
+* Baseline Refusals: 99/100
+* Baseline KL divergence: 0 (by definition)
 ```
 
-### Refusal directions calculation
+### Modifier initialization
 
-Heretic modifies language models by ablating "refusal directions" from certain operators.
-This step computes those directions based on the provided prompts.
+Heretic modifies language models using modifier plugins.
+This step prepares the configured modifier for use.
 
 ```
-Calculating per-layer refusal directions...
-* Obtaining residual mean for good prompts...
-* Obtaining residual mean for bad prompts...
+Loading and initializing modifiers...
+* Loaded: ARA
+
+Loading good prompts from mlabonne/harmless_alpaca...
+* 400 prompts loaded
+
+Loading bad prompts from mlabonne/harmful_behaviors...
+* 400 prompts loaded
+
+Obtaining module I/O for good prompts...
+
+Obtaining module I/O for bad prompts...
 ```
 
 ### Parameter optimization
 
 This is the heart of the process. Heretic searches for a combination of parameter values that,
-when used to control ablation of the refusal directions, yields the best compromise between
-refusal suppression and model quality.
+when used with the configured modifier, yield the best compromise between the scores.
 
-This step can take some time, slightly under 3 hours in this case. An estimate for the remaining
+This step can take some time, around 2 hours in this case. An estimate for the remaining
 amount of time, as well as memory stats, are displayed after every trial.
 
 ```
-Running trial 1 of 200...
+Running trial 1 of 100...
 * Parameters:
-  * direction_index = per layer
-  * attn.o_proj.max_weight = 1.39
-  * attn.o_proj.max_weight_position = 25.29
-  * attn.o_proj.min_weight = 0.15
-  * attn.o_proj.min_weight_distance = 2.39
-  * mlp.down_proj.max_weight = 1.23
-  * mlp.down_proj.max_weight_position = 20.65
-  * mlp.down_proj.min_weight = 0.19
-  * mlp.down_proj.min_weight_distance = 11.58
+  * start_layer_index = 8
+  * end_layer_index = 18
+  * preserve_good_behavior_weight = 0.8782
+  * steer_bad_behavior_weight = 0.1185
+  * overcorrect_relative_weight = 1.1182
+  * neighbor_count = 2
 * Resetting model...
-* Abliterating...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
 * Evaluating...
-  * Obtaining first-token probability distributions...
-  * KL divergence: 0.0126
-  * Counting model refusals...
-  * Refusals: 88/100
+  * Refusals: 0/100
+  * KL divergence: 14.2954
 
-Elapsed time: 53s
-Estimated remaining time: 2h 56m
-Resident system RAM: 2.23 GB
-Allocated GPU VRAM: 8.47 GB
-Reserved GPU VRAM: 10.12 GB
+Elapsed time: 1m 1s
+Estimated remaining time: 1h 40m
+Resident system RAM: 3.71 GB
+Allocated GPU VRAM: 8.58 GB
+Reserved GPU VRAM: 8.60 GB
 
-Running trial 2 of 200...
+Running trial 2 of 100...
 * Parameters:
-  * direction_index = per layer
-  * attn.o_proj.max_weight = 1.49
-  * attn.o_proj.max_weight_position = 25.36
-  * attn.o_proj.min_weight = 0.01
-  * attn.o_proj.min_weight_distance = 3.19
-  * mlp.down_proj.max_weight = 1.49
-  * mlp.down_proj.max_weight_position = 23.56
-  * mlp.down_proj.min_weight = 0.33
-  * mlp.down_proj.min_weight_distance = 11.33
+  * start_layer_index = 2
+  * end_layer_index = 32
+  * preserve_good_behavior_weight = 0.8253
+  * steer_bad_behavior_weight = 0.0890
+  * overcorrect_relative_weight = 0.1490
+  * neighbor_count = 1
 * Resetting model...
-* Abliterating...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
 * Evaluating...
-  * Obtaining first-token probability distributions...
-  * KL divergence: 0.0125
-  * Counting model refusals...
-  * Refusals: 88/100
+  * Refusals: 85/100
+  * KL divergence: 0.4825
 
-Elapsed time: 1m 46s
-Estimated remaining time: 2h 55m
-Resident system RAM: 2.16 GB
-Allocated GPU VRAM: 8.47 GB
-Reserved GPU VRAM: 10.13 GB
+Elapsed time: 2m 38s
+Estimated remaining time: 2h 9m
+Resident system RAM: 3.71 GB
+Allocated GPU VRAM: 8.58 GB
+Reserved GPU VRAM: 8.60 GB
 
-[... 198 more trials ...]
+[... 98 more trials ...]
 ```
 
 ### Trial selection
 
 After the optimization run is complete, you will be shown the
 [Pareto front](https://en.wikipedia.org/wiki/Pareto_front) of all trials,
-and asked to choose which combination of refusal count and
+and asked to choose which combination of scores you want. By default, the scores are
+refusal count and
 [KL divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence)
-(a rough measure of the difference between the modified model and the original one)
-you want.
+(a rough measure of the difference between the modified model and the original one).
 
 > [!IMPORTANT]
 >
@@ -294,26 +292,21 @@ you want.
 ```
 Optimization finished!
 
-The following trials resulted in Pareto optimal combinations of refusals
-and KL divergence. After selecting a trial, you will be able to save the
-model, upload it to Hugging Face, chat with it to test how well it works,
-or run standard benchmarks on it. You can return to this menu later to
-select a different trial. Note that KL divergence values above 0.5 usually
-indicate significant damage to the original model's capabilities.
+The following trials resulted in Pareto optimal combinations of the
+optimization objectives. After selecting a trial, you will be able to
+save the model, upload it to Hugging Face, chat with it to test how well
+it works, or run standard benchmarks on it. You can return to this menu
+later to select a different trial.
 
 ? Which trial do you want to use? (Use arrow keys)
- » [Trial  91] Refusals: 11/100, KL divergence: 0.0508
+ » [Trial  91] Refusals:  9/100, KL divergence: 0.0508
    [Trial  81] Refusals: 21/100, KL divergence: 0.0366
-   [Trial 116] Refusals: 30/100, KL divergence: 0.0296
    [Trial  93] Refusals: 45/100, KL divergence: 0.0120
    [Trial  70] Refusals: 74/100, KL divergence: 0.0112
    [Trial  37] Refusals: 75/100, KL divergence: 0.0109
    [Trial  83] Refusals: 76/100, KL divergence: 0.0077
    [Trial  85] Refusals: 77/100, KL divergence: 0.0059
-   [Trial 126] Refusals: 80/100, KL divergence: 0.0035
    [Trial  47] Refusals: 86/100, KL divergence: 0.0032
-   [Trial 119] Refusals: 87/100, KL divergence: 0.0011
-   [Trial 113] Refusals: 91/100, KL divergence: 0.0010
    [Trial  49] Refusals: 93/100, KL divergence: 0.0006
    Run additional trials
    Exit program
@@ -331,17 +324,14 @@ with it.
 ```
 Restoring model from trial 91...
 * Parameters:
-  * direction_index = 19.93
-  * attn.o_proj.max_weight = 1.36
-  * attn.o_proj.max_weight_position = 18.63
-  * attn.o_proj.min_weight = 1.21
-  * attn.o_proj.min_weight_distance = 16.30
-  * mlp.down_proj.max_weight = 1.44
-  * mlp.down_proj.max_weight_position = 18.86
-  * mlp.down_proj.min_weight = 1.16
-  * mlp.down_proj.min_weight_distance = 12.35
+  * start_layer_index = 5
+  * end_layer_index = 26
+  * preserve_good_behavior_weight = 0.6126
+  * steer_bad_behavior_weight = 0.0003
+  * overcorrect_relative_weight = 0.8997
+  * neighbor_count = 9
 * Resetting model...
-* Abliterating...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
 
 ? What do you want to do with the decensored model? (Use arrow keys)
  » Save the model to a local folder

@@ -11,7 +11,7 @@ and to ensure Heretic is always available to anyone who wants to install it.
 
 ## PyPI
 
-Prepare a Python 3.10+ environment with PyTorch 2.2+ installed as appropriate for your hardware.
+Prepare a Python 3.10+ environment with PyTorch 2.6+ installed as appropriate for your hardware.
 Then run:
 
 ```sh
@@ -19,13 +19,6 @@ pip install -U heretic-llm
 ```
 
 This will install the latest stable release of Heretic.
-
-> [!IMPORTANT]
->
-> While PyTorch 2.2 is the minimum version of PyTorch needed for Heretic to work,
-> some models and configurations might require features only found in
-> later versions. For example, loading MXFP4-quantized models like gpt-oss
-> uses `torch.accelerator`, which was added in PyTorch 2.6.
 
 ## Git
 
