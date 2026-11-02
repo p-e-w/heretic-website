@@ -70,7 +70,7 @@ comes with an attached release archive and signature file.
 
 ### Internet Archive
 
-All Heretic releases to date have been
+Some Heretic releases have been
 [uploaded to the Internet Archive](https://archive.org/search?query=creator%3A%22p-e-w+%28Philipp+Emanuel+Weidmann%29%22).
 
 ### IPFS
@@ -80,6 +80,8 @@ enabling decentralized retrieval. The CIDs are:
 
 | Filename                            | CID                                                           |
 | ----------------------------------- | ------------------------------------------------------------- |
+| **heretic-2.0.0.zip**               | `bafybeie5jmtngbqfjdkaxnhlo42i3lscxuclfeg6zzrywsspvnqk54rkba` |
+| **heretic-2.0.0.zip.sigstore.json** | `bafkreifak4zgt5ut6lxogad4fu5q2o5a43lgwpeolpcg2rufayouaq66ea` |
 | **heretic-1.4.0.zip**               | `bafybeiaqxqjdtkkrqeamnkjudvxlnrj7mululk3ipiafcyfhp2i3chbnue` |
 | **heretic-1.4.0.zip.sigstore.json** | `bafkreidhxgotlfko23bajxbcoruljpt7wkuytew7fjuglotjpr3cm7bwi4` |
 | **heretic-1.3.0.zip**               | `bafybeianhsrnlkxdf5btyvgsaahqkhurmrowkuk4ymddz37wcnxz7gjxoe` |
