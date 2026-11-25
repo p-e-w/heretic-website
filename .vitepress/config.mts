@@ -20,6 +20,7 @@ export default defineConfig({
       { text: 'Installation', link: '/installation' },
       { text: 'Configuration', link: '/configuration' },
       { text: 'Security', link: '/security' },
+      { text: 'Numbers', link: '/numbers' },
     ],
 
     socialLinks: [
